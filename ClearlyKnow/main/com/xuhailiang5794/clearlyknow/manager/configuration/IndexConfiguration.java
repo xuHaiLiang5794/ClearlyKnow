@@ -2,6 +2,12 @@ package com.xuhailiang5794.clearlyknow.manager.configuration;
 
 import com.xuhailiang5794.clearlyknow.manager.Constants;
 
+/**
+ * 索引参数配置类
+ * 
+ * @author 徐海亮
+ *
+ */
 public class IndexConfiguration {
 
 	private String path = Constants.PATH;
