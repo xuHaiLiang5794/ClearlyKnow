@@ -16,7 +16,7 @@ public class Entity {
 		this.name = name;
 		this.age = age;
 		this.sex = sex;
-		this.desc = "µÄ¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥µÄ¶¥¶¥¶¥¶¥¶¥µÄ¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥¶¥²Å²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È²È´Ó";
+		this.desc = "sddd";
 	}
 
 }

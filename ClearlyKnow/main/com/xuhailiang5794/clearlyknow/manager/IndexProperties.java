@@ -8,20 +8,20 @@ import org.apache.lucene.document.FieldType;
 import com.xuhailiang5794.clearlyknow.test.Entity;
 
 /**
- * ´æ´¢ĞèÒª½¨Á¢Ë÷ÒıµÄÊôĞÔ×Ö¶Î; ¸Ã×Ö¶ÎÊÇ·ñ´æ´¢; ¸ÃÀàµÄ${@link #field}×Ö¶Î±ØĞëÊÇ´«Èë{@link IndexManager
- * IndexManager}µÄÊı¾İÊµÌåµÄÊôĞÔ
+ * å­˜å‚¨éœ€è¦å»ºç«‹ç´¢å¼•çš„å±æ€§å­—æ®µ; è¯¥å­—æ®µæ˜¯å¦å­˜å‚¨; è¯¥ç±»çš„${@link #field}å­—æ®µå¿…é¡»æ˜¯ä¼ å…¥{@link IndexManager
+ * IndexManager}çš„æ•°æ®å®ä½“çš„å±æ€§
  * 
- * @author Ğìº£ÁÁ
+ * @author å¾æµ·äº®
  *
  */
 public class IndexProperties {
 
-	// ½¨Ë÷ÒıÊ±ĞèÒªµÄÊµÌåµÄÊôĞÔ¶ÔÏó
+	// å»ºç´¢å¼•æ—¶éœ€è¦çš„å®ä½“çš„å±æ€§å¯¹è±¡
 	private Field field;
 
 	private Store store;
 
-	// ÊôĞÔÃû£¬½¨Ë÷ÒıÊ±ÒÔ´Ë×Ö¶ÎÎªË÷Òı×Ö¶ÎÃû³Æ
+	// å±æ€§åï¼Œå»ºç´¢å¼•æ—¶ä»¥æ­¤å­—æ®µä¸ºç´¢å¼•å­—æ®µåç§°
 	private String name;
 
 	private Class<?> clazz;

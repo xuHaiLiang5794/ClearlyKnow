@@ -3,9 +3,9 @@ package com.xuhailiang5794.clearlyknow.manager.configuration;
 import com.xuhailiang5794.clearlyknow.manager.Constants;
 
 /**
- * Ë÷Òı²ÎÊıÅäÖÃÀà
+ * ç´¢å¼•å‚æ•°é…ç½®ç±»
  * 
- * @author Ğìº£ÁÁ
+ * @author å¾æµ·äº®
  *
  */
 public class IndexConfiguration {

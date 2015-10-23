@@ -64,7 +64,7 @@ public class IndexManagerTest {
 
 		indexManager.deleteAll();
 		List<Entity> list = new ArrayList<Entity>();
-		list.add(new Entity("Ğ¡Ã÷¶£¶£µ±µ±¸Ãf", 15, "ÄĞ"));
+		list.add(new Entity("å°æ˜å®å®å½“å½“è¯¥f", 15, "ç”·"));
 		Class<?> clazz = Entity.class;
 		List<IndexProperties> propertys = new ArrayList<IndexProperties>();
 		propertys.add(new IndexProperties(clazz.getDeclaredField("name"),
@@ -83,14 +83,14 @@ public class IndexManagerTest {
 	@Test
 	public void testSearchAll() throws IOException, Exception {
 		QueryParser parser = new QueryParser("name", new IKAnalyzer());
-		Query query = parser.parse("µ±µ±");
-		// query = new TermQuery(new Term("name", "Ğ¡Ã÷¶£¶£"));
+		Query query = parser.parse("å½“å½“");
+		// query = new TermQuery(new Term("name", "å°æ˜å®å®"));
 		IndexSearcher indexSearcher = new IndexSearcher(
 				DirectoryReader.open(FSDirectory.open(Paths
 						.get("D:\\test\\index11\\"))));
 
 		List<Entity> list = new ArrayList<Entity>();
-		list.add(new Entity("Ğ¡Ã÷¶£¶£µ±µ±¸Ãf", 15, "ÄĞ"));
+		list.add(new Entity("å°æ˜å®å®å½“å½“è¯¥f", 15, "ç”·"));
 		Class<?> clazz = Entity.class;
 		List<IndexProperties> propertys = new ArrayList<IndexProperties>();
 		propertys.add(new IndexProperties(clazz.getDeclaredField("name"),
@@ -116,7 +116,7 @@ public class IndexManagerTest {
 		System.out.println((indexSearcher.search(query, 10).totalHits));
 		System.out
 				.println(indexSearcher.doc(indexSearcher.search(
-						new WildcardQuery(new Term("name", "*Ğ¡Ã÷*")), 10).scoreDocs[0].doc));
+						new WildcardQuery(new Term("name", "*å°æ˜*")), 10).scoreDocs[0].doc));
 	}
 
 	@Test
@@ -136,7 +136,7 @@ public class IndexManagerTest {
 	private void analyzer(Analyzer analyzer) throws IOException {
 		TokenStream ts = null;
 		try {
-			String str = "ÎÒÃÇÊÇÊÇÖĞ¹úÈË";
+			String str = "æˆ‘ä»¬æ˜¯æ˜¯ä¸­å›½äºº";
 			StringReader reader = new StringReader(str);
 			ts = analyzer.tokenStream("field", reader);
 			OffsetAttribute offset = ts.addAttribute(OffsetAttribute.class);
