@@ -1,10 +1,11 @@
-package com.xuhailiang5794.clearlyknow.manager;
+package com.xuhailiang5794.clearlyknow.manager.entity;
 
 import java.lang.reflect.Field;
 
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.FieldType;
 
+import com.xuhailiang5794.clearlyknow.manager.IndexManager;
 import com.xuhailiang5794.clearlyknow.test.Entity;
 
 /**

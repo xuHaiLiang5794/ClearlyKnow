@@ -26,6 +26,8 @@ import org.apache.lucene.store.NIOFSDirectory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.xuhailiang5794.clearlyknow.manager.configuration.IndexConfiguration;
+import com.xuhailiang5794.clearlyknow.manager.entity.IndexProperties;
+import com.xuhailiang5794.clearlyknow.manager.utils.IndexUtils;
 
 /**
  * 索引创建等

@@ -1,4 +1,4 @@
-package com.xuhailiang5794.clearlyknow.manager;
+package com.xuhailiang5794.clearlyknow.manager.constants;
 
 public interface Constants {
 

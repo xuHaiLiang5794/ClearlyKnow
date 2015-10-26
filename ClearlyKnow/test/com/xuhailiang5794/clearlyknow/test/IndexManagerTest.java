@@ -46,7 +46,7 @@ import org.junit.Test;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.xuhailiang5794.clearlyknow.manager.IndexManager;
-import com.xuhailiang5794.clearlyknow.manager.IndexProperties;
+import com.xuhailiang5794.clearlyknow.manager.entity.IndexProperties;
 
 public class IndexManagerTest {
 

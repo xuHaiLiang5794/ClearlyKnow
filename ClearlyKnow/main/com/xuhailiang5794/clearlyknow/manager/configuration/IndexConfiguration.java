@@ -1,6 +1,6 @@
 package com.xuhailiang5794.clearlyknow.manager.configuration;
 
-import com.xuhailiang5794.clearlyknow.manager.Constants;
+import com.xuhailiang5794.clearlyknow.manager.constants.Constants;
 
 /**
  * 索引参数配置类
