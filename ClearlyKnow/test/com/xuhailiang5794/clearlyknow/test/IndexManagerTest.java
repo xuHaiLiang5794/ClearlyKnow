@@ -46,15 +46,19 @@ import org.junit.Test;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.xuhailiang5794.clearlyknow.manager.IndexManager;
+import com.xuhailiang5794.clearlyknow.manager.IndexSearcherManager;
+import com.xuhailiang5794.clearlyknow.manager.IndexWriterManager;
 import com.xuhailiang5794.clearlyknow.manager.entity.IndexProperties;
 
 public class IndexManagerTest {
 
-	private IndexManager indexManager;
+	private IndexWriterManager indexManager;
+	private IndexSearcherManager searcherManager;
 
 	@Before
 	public void init() throws IOException {
-		indexManager = new IndexManager("D:\\test\\index11\\");
+//		indexManager = new IndexWriterManager();
+		searcherManager = new IndexSearcherManager();
 	}
 
 	@Test
@@ -62,7 +66,7 @@ public class IndexManagerTest {
 			SecurityException, IllegalArgumentException,
 			IllegalAccessException, IOException {
 
-		indexManager.deleteAll();
+		// indexManager.deleteAll();
 		List<Entity> list = new ArrayList<Entity>();
 		list.add(new Entity("小明叮叮当当该f", 15, "男"));
 		Class<?> clazz = Entity.class;
@@ -75,7 +79,7 @@ public class IndexManagerTest {
 				Store.YES));
 		propertys.add(new IndexProperties(clazz.getDeclaredField("desc"),
 				Store.YES));
-		indexManager.index(list, clazz, propertys);
+		indexManager.createIndex(list, clazz, propertys);
 		indexManager.commit();
 		indexManager.close();
 	}
@@ -83,7 +87,7 @@ public class IndexManagerTest {
 	@Test
 	public void testSearchAll() throws IOException, Exception {
 		QueryParser parser = new QueryParser("name", new IKAnalyzer());
-		Query query = parser.parse("当当");
+		Query query = parser.parse("小明叮叮当当该f");
 		// query = new TermQuery(new Term("name", "小明叮叮"));
 		IndexSearcher indexSearcher = new IndexSearcher(
 				DirectoryReader.open(FSDirectory.open(Paths
@@ -101,7 +105,7 @@ public class IndexManagerTest {
 				Store.YES));
 		propertys.add(new IndexProperties(clazz.getDeclaredField("desc"),
 				Store.YES));
-		indexManager.index(list, clazz, propertys);
+		indexManager.createIndex(list, clazz, propertys);
 		indexManager.commit();
 		indexManager.close();
 
@@ -157,6 +161,11 @@ public class IndexManagerTest {
 		} finally {
 			ts.close();
 		}
+	}
+	
+	@Test
+	public void testIndexSearcherManager() throws IOException {
+		searcherManager.searcher();
 	}
 
 	public static void main(String[] args) throws Exception {

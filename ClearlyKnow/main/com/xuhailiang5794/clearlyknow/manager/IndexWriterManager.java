@@ -16,11 +16,9 @@ import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TrackingIndexWriter;
-import org.apache.lucene.search.ControlledRealTimeReopenThread;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ReferenceManager;
-import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
@@ -30,79 +28,74 @@ import com.xuhailiang5794.clearlyknow.manager.entity.IndexProperties;
 import com.xuhailiang5794.clearlyknow.manager.utils.IndexUtils;
 
 /**
- * 索引创建等
+ * 索引创建、数据追加、元素删除、元素修改
  * 
  * @author 徐海亮
  *
  */
-public class IndexManager {
+public class IndexWriterManager {
+
+	private String path;
 
 	private IndexConfiguration configuration;
 	private Directory directory;
 	private Analyzer analyzer;
+	private OpenMode openMode = OpenMode.CREATE_OR_APPEND;
 	private IndexWriterConfig indexWriterConfig;
 	private IndexWriter indexWriter;
 
 	private TrackingIndexWriter trackingIndexWriter;
-	private ReferenceManager<IndexSearcher> referenceManager;
-	private ControlledRealTimeReopenThread<IndexSearcher> controlledRealTimeReopenThread;
 
-	public IndexManager(String path) throws IOException {
+	public IndexWriterManager(OpenMode openMode) throws IOException {
+		if (openMode == null)
+			throw new IllegalArgumentException("openMode must not be null");
+		this.openMode = openMode;
+		init();
+	}
+
+	public IndexWriterManager() throws IOException {
 		init();
 	}
 
 	private void init() throws IOException {
 		configuration = new IndexConfiguration();
-		// this.directory = FSDirectory.open(Paths.get(path));
-		this.directory = NIOFSDirectory
-				.open(Paths.get(configuration.getPath()));
-		// this.analyzer = new StandardAnalyzer();
-		// this.analyzer = new PaodingAnalyzer();
-		// this.analyzer = new WhitespaceAnalyzer();
-		// this.analyzer = new CJKAnalyzer();
+		this.path = configuration.getPath();
+		this.directory = NIOFSDirectory.open(Paths.get(path));
 		this.analyzer = new IKAnalyzer();
 		this.indexWriterConfig = new IndexWriterConfig(analyzer);
+		this.indexWriterConfig.setOpenMode(openMode);
+		this.indexWriterConfig.setRAMBufferSizeMB(configuration
+				.getRamBufferSizeMb());
 		this.indexWriter = new IndexWriter(directory, indexWriterConfig);
-		this.trackingIndexWriter = new TrackingIndexWriter(indexWriter);
-		indexWriterConfig
-				.setRAMBufferSizeMB(configuration.getRamBufferSizeMb());
-		this.referenceManager = new SearcherManager(indexWriter, true, null);
-		this.controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(
-				trackingIndexWriter, referenceManager,
-				configuration.getTargetMaxStaleSec(),
-				configuration.getTargetMinStaleSec());
-		this.controlledRealTimeReopenThread.setDaemon(true);
-		this.controlledRealTimeReopenThread.setName("Index update to Disk");
-		this.controlledRealTimeReopenThread.start();
-
 		this.indexWriter.forceMerge(configuration.getMaxNumSegments());
+		this.trackingIndexWriter = new TrackingIndexWriter(indexWriter);
+	}
+
+	public long delete(String name, String value) throws IOException {
+		return trackingIndexWriter.deleteDocuments(new Term(name, value));
 	}
 
 	public void deleteAll() throws IOException {
 		indexWriter.deleteAll();
 	}
 
-	public void commit() throws IOException {
-		indexWriter.commit();
+	public long update(Term term, Document doc) throws IOException {
+		return trackingIndexWriter.updateDocument(term, doc);
 	}
 
-	public void index(List<?> list, Class<?> clazz,
+	public void createIndex(List<?> data, Class<?> clazz,
 			List<IndexProperties> propertys) throws IOException,
 			IllegalArgumentException, IllegalAccessException {
 		Document doc = null;
-		if (list != null && !list.isEmpty()) {
-			if (list instanceof RandomAccess) {
-				for (int i = 0, size = list.size(); i < size; i++) {
-					Object obj = list.get(i);
+		if (data != null && !data.isEmpty()) {
+			if (data instanceof RandomAccess) {
+				for (int i = 0, size = data.size(); i < size; i++) {
+					Object obj = data.get(i);
 					doc = createDocument(obj, propertys);
 					trackingIndexWriter.addDocument(doc);
 				}
 			}
 		}
-	}
-
-	public void close() throws IOException {
-		indexWriter.close();
 	}
 
 	private Document createDocument(Object obj, List<IndexProperties> propertys)
@@ -116,11 +109,11 @@ public class IndexManager {
 				String name = properties.getName();
 				Store stored = properties.getStore();
 				Class<?> clazz = properties.getClazz();
-				if (IndexUtils.isNumericType(clazz)) {
-					field = createNumericTypeField(clazz, name, value, stored);
-				} else {
+				if (!IndexUtils.isNumericType(clazz)) {
 					field = createNotNumericTypeField(clazz, name, value,
 							stored);
+				} else {
+					field = createNumericTypeField(clazz, name, value, stored);
 				}
 				doc.add(field);
 			}
@@ -148,6 +141,15 @@ public class IndexManager {
 			field = new LongField(name, (Long) value, stored);
 		}
 		return field;
+	}
+
+	public void commit() throws IOException {
+		indexWriter.commit();
+	}
+
+	public void close() throws IOException {
+		commit();
+		indexWriter.close();
 	}
 
 }

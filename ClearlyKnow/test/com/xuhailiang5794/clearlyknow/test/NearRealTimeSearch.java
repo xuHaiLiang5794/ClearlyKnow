@@ -29,7 +29,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 /**
- * NRT£¨near real time£©½üÊµÊ±ËÑË÷²âÊÔ
+ * NRTï¼ˆnear real timeï¼‰è¿‘å®æ—¶æœç´¢æµ‹è¯•
  * 
  * @author Johnny
  *
@@ -52,7 +52,7 @@ public class NearRealTimeSearch {
 
 	/** nrt init **/
 	private TrackingIndexWriter trackingIndexWriter = null;
-	private ReferenceManager<IndexSearcher> reMgr = null;// ÀàËÆÓÚLucene3.xÖĞµÄNrtManager
+	private ReferenceManager<IndexSearcher> reMgr = null;// ç±»ä¼¼äºLucene3.xä¸­çš„NrtManager
 	private ControlledRealTimeReopenThread<IndexSearcher> crt = null;
 
 	private void setDates() {
@@ -70,7 +70,7 @@ public class NearRealTimeSearch {
 		}
 	}
 
-	// Êı¾İ³õÊ¼»¯
+	// æ•°æ®åˆå§‹åŒ–
 	public NearRealTimeSearch() {
 		setDates();
 
@@ -86,12 +86,12 @@ public class NearRealTimeSearch {
 
 			trackingIndexWriter = new TrackingIndexWriter(writer);
 			reMgr = new SearcherManager(writer, true, new SearcherFactory());
-			/** ÔÚ0.025s~5.0sÖ®¼äÖØÆôÒ»´ÎÏß³Ì£¬Õâ¸öÊÇÊ±¼äµÄ×î¼ÑÊµ¼ù **/
+			/** åœ¨0.025s~5.0sä¹‹é—´é‡å¯ä¸€æ¬¡çº¿ç¨‹ï¼Œè¿™ä¸ªæ˜¯æ—¶é—´çš„æœ€ä½³å®è·µ **/
 			crt = new ControlledRealTimeReopenThread<>(trackingIndexWriter,
 					reMgr, 5.0, 0.025);
-			crt.setDaemon(true);// ÉèÖÃÎªºóÌ¨·şÎñ
-			crt.setName("Index update to disk");// Ïß³ÌÃû³Æ
-			crt.start();// Ïß³ÌÆô¶¯
+			crt.setDaemon(true);// è®¾ç½®ä¸ºåå°æœåŠ¡
+			crt.setName("Index update to disk");// çº¿ç¨‹åç§°
+			crt.start();// çº¿ç¨‹å¯åŠ¨
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,7 +100,7 @@ public class NearRealTimeSearch {
 	}
 
 	/**
-	 * ¶¨ÆÚÌá½»ÄÚ´æÖĞµÃË÷Òıµ½Ó²ÅÌÉÏ£¬·ÀÖ¹¶ªÊ§
+	 * å®šæœŸæäº¤å†…å­˜ä¸­å¾—ç´¢å¼•åˆ°ç¡¬ç›˜ä¸Šï¼Œé˜²æ­¢ä¸¢å¤±
 	 */
 	public void commit() {
 		try {
@@ -111,7 +111,7 @@ public class NearRealTimeSearch {
 	}
 
 	/**
-	 * ½¨Á¢Ë÷Òı ÒªÊµÏÖsearch nrt,ĞèÒªÊ¹ÓÃTrackIndexWriter±£´ædocument£¬Í¬Ê±WriterÒ²²»ĞèÒª¹Ø±Õ¡£
+	 * å»ºç«‹ç´¢å¼• è¦å®ç°search nrt,éœ€è¦ä½¿ç”¨TrackIndexWriterä¿å­˜documentï¼ŒåŒæ—¶Writerä¹Ÿä¸éœ€è¦å…³é—­ã€‚
 	 * 
 	 * **/
 	public void index(boolean isNew) {
@@ -124,27 +124,27 @@ public class NearRealTimeSearch {
 					doc.add(new StringField("email", emails[i], Store.YES));
 					doc.add(new TextField("content", contents[i], Store.NO));
 					doc.add(new TextField("name", names[i], Store.YES));
-					// ´æ´¢Êı×Ö
+					// å­˜å‚¨æ•°å­—
 					doc.add(new IntField("attach", attachs[i], Store.YES));
-					// ´æ´¢ÈÕÆÚ
+					// å­˜å‚¨æ—¥æœŸ
 					doc.add(new LongField("date", dates[i].getTime(), Store.YES));
-					// Ê¹ÓÃtrackingIndexWriter´´½¨document
+					// ä½¿ç”¨trackingIndexWriteråˆ›å»ºdocument
 					trackingIndexWriter.addDocument(doc);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				commit();// Ê×´Î´´½¨£¬Ìá½»Ë÷Òı,Ö»ÓĞÌá½»ºó£¬²Å»áÔÚË÷ÒıÆ¬¶ÎÖĞÒ²½«ĞÅÏ¢¸Ä±ä
+				commit();// é¦–æ¬¡åˆ›å»ºï¼Œæäº¤ç´¢å¼•,åªæœ‰æäº¤åï¼Œæ‰ä¼šåœ¨ç´¢å¼•ç‰‡æ®µä¸­ä¹Ÿå°†ä¿¡æ¯æ”¹å˜
 			}
 		}
 	}
 
-	/*** ²éÑ¯ **/
+	/*** æŸ¥è¯¢ **/
 	public void query() {
 		IndexSearcher is = getSearcher();
 
 		try {
-			// Í¨¹ıreader¿ÉÒÔÓĞĞ§µÄ»ñÈ¡µ½ÎÄµµµÄÊıÁ¿
+			// é€šè¿‡readerå¯ä»¥æœ‰æ•ˆçš„è·å–åˆ°æ–‡æ¡£çš„æ•°é‡
 			System.out.println("numDocs:" + is.getIndexReader().numDocs());
 			System.out.println("maxDocs:" + is.getIndexReader().maxDoc());
 			System.out.println("deleteDocs:"
@@ -161,7 +161,7 @@ public class NearRealTimeSearch {
 	}
 
 	/**
-	 * É¾³ı Ê¹ÓÃtrackIndexWriter½øĞĞÊı¾İÉ¾³ı£¬Ò²²»ĞèÒª¹Ø±ÕWriter
+	 * åˆ é™¤ ä½¿ç”¨trackIndexWriterè¿›è¡Œæ•°æ®åˆ é™¤ï¼Œä¹Ÿä¸éœ€è¦å…³é—­Writer
 	 * **/
 	public void delete() {
 		try {
@@ -172,13 +172,13 @@ public class NearRealTimeSearch {
 	}
 
 	/**
-	 * ĞŞ¸Ä Ê¹ÓÃtrackIndexWriter½øĞĞĞŞ¸Ä£¬²»ĞèÒª¹Ø±Õwriter
+	 * ä¿®æ”¹ ä½¿ç”¨trackIndexWriterè¿›è¡Œä¿®æ”¹ï¼Œä¸éœ€è¦å…³é—­writer
 	 * **/
 	public void update() {
 		try {
 			Document doc = new Document();
 			/*
-			 * Lucene²¢Ã»ÓĞÌá¹©¸üĞÂ£¬ÕâÀïµÄ¸üĞÂ²Ù×÷ÆäÊµÊÇÈçÏÂÁ½¸ö²Ù×÷µÄºÏ¼¯ ÏÈÉ¾³ıÖ®ºóÔÙÌí¼Ó
+			 * Luceneå¹¶æ²¡æœ‰æä¾›æ›´æ–°ï¼Œè¿™é‡Œçš„æ›´æ–°æ“ä½œå…¶å®æ˜¯å¦‚ä¸‹ä¸¤ä¸ªæ“ä½œçš„åˆé›† å…ˆåˆ é™¤ä¹‹åå†æ·»åŠ 
 			 */
 			doc.add(new StringField("id", "21", Store.YES));
 			doc.add(new TextField("email", "aa.bb@s", Store.YES));
@@ -190,12 +190,12 @@ public class NearRealTimeSearch {
 		}
 	}
 
-	/** Ê¹ÓÃµ¥Àı»ñÈ¡IndexSearch **/
+	/** ä½¿ç”¨å•ä¾‹è·å–IndexSearch **/
 	public IndexSearcher getSearcher() {
 		IndexSearcher is = null;
 		try {
 			if (is == null) {
-				reMgr.maybeRefresh();// Ë¢ĞÂreMgr,»ñÈ¡×îĞÂµÄIndexSearcher
+				reMgr.maybeRefresh();// åˆ·æ–°reMgr,è·å–æœ€æ–°çš„IndexSearcher
 				is = reMgr.acquire();
 
 			}
@@ -210,10 +210,10 @@ public class NearRealTimeSearch {
 	}
 
 	/**
-	 * ²éÑ¯
+	 * æŸ¥è¯¢
 	 * 
-	 * ²éÑ¯Ê±searchÈç¹ûÊ¹ÓÃÍê³É£¬ĞèÒª½«searchÊÍ·Å»ásearchFactoryÖĞ£¬Ê¹ÓÃreMgr¡£release(indexSearcher)
-	 * ½øĞĞÊÍ·Å
+	 * æŸ¥è¯¢æ—¶searchå¦‚æœä½¿ç”¨å®Œæˆï¼Œéœ€è¦å°†searché‡Šæ”¾ä¼šsearchFactoryä¸­ï¼Œä½¿ç”¨reMgrã€‚release(indexSearcher)
+	 * è¿›è¡Œé‡Šæ”¾
 	 * **/
 	public void search() {
 		IndexSearcher is = getSearcher();
@@ -241,13 +241,13 @@ public class NearRealTimeSearch {
 	}
 
 	/**
-	 * ¹Ø±Õ³õÊ¼»¯Ïß³ÌµÄ´¦Àí
+	 * å…³é—­åˆå§‹åŒ–çº¿ç¨‹çš„å¤„ç†
 	 */
 	public void close() {
 		// stop the re-open thread
 		crt.interrupt();
 		crt.close();
-		// close the indexWriter,commit ËùÓĞÓĞ¹ıĞŞ¸ÄµÄÄÚÈİ
+		// close the indexWriter,commit æ‰€æœ‰æœ‰è¿‡ä¿®æ”¹çš„å†…å®¹
 		try {
 			writer.commit();
 			writer.close();
